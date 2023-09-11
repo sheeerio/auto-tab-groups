@@ -2,7 +2,7 @@
     "name": "My Tab Groups",
     "version": "0.1.0",
     "description": "Saving tab groups",
-    "permissions": ["storage", "tabs"],
+    "permissions": ["storage", "tabs", "tabGroups"],
     "host_permissions": ["<all_urls>"],
     "background": {
       "service_worker": "background.js"
@@ -21,7 +21,7 @@
           "assets/delete.png",
           "assets/save.png"
         ],
-        "matches": ["https://*.youtube.com/*"]
+        "matches": ["https://*/*"]
       }
     ],
     "action": {
