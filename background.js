@@ -1,46 +1,35 @@
-async function getAllTabGroupIdsInList() {
+async function getAllTabGroupIds() {
   let browserTabGroupObject = await chrome.tabGroups.query({});
-  let browserTabGroupIds = [];
-  if (Object.keys(browserTabGroupObject).length !== 0) {
-    for (let i=0; i<browserTabGroupObject.length; i++) {
-      browserTabGroupIds.push(browserTabGroupObject[i].id);
-    }
-  }
+  let browserTabGroupIds = browserTabGroupObject.map((tabGroup) => tabGroup.id);
   return browserTabGroupIds;
 }
 
+async function getCurrentTabsGroupId() {
+  let currentTab = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+  return currentTab[0].groupId;
+}  
+
+async function getURLsInCurrentGroup(groupId) {
+  allTabs = await chrome.tabs.query({});
+
+  const URLsInCurrentGroup = allTabs
+    .filter((tab) => tab.groupId === groupId)
+    .map((tab) => tab.url);
+
+  return URLsInCurrentGroup;
+
+}
+
+
 chrome.tabs.onActivated.addListener(async(tabId, tab) => {
 
-  console.log(getAllTabGroupIdsInList());
-  currentGroupIds = getAllTabGroupIdsInList();
-  // for (let i=0; i<currentGroupIds.length; i++) {
-  //   if (tab.groupId==currentGroupIds[i]) {
-  //     currentTabsGroupId.push(currentGroupIds[i]);
-  //     break;
-  //   }
-  // }
+  let allGroupIds = await getAllTabGroupIds();
+  console.log("All Tab Group IDs:", allGroupIds);
 
-  let currentTabsGroupId = [];
-  chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-    currentTabsGroupId.push(tabs[0].groupId);
-    console.log(currentTabsGroupId);
-  });
-  
-  
-  // now go through all opened tabs that are loaded to check which ones 
-  // are in the currentTab's Group and add their (tabIds) to the list of 
-  // currentTab's Group's Tabs
-  let tabIdsInCurrentGroup = [];
+  let currentTabsGroupId = await getCurrentTabsGroupId();
+  console.log("Current Tab's Group ID:", currentTabsGroupId);
 
-  let browserTabs = await chrome.tabs.query({});
-
-  for (let i=0; i<browserTabs.length; i++) {
-    // browser's i-th tab's groupId matches the current tab's GroupId
-    if (browserTabs[i].groupId == currentTabsGroupId[0]) {
-      tabIdsInCurrentGroup.push(browserTabs[i].id);
-    }
-  }
-
-  console.log(tabIdsInCurrentGroup.length);
+  let tabIdsInCurrentGroup = await getURLsInCurrentGroup(currentTabsGroupId);
+  console.log("Tab IDs in Current Group:", tabIdsInCurrentGroup);
 
 });
