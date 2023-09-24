@@ -17,7 +17,16 @@ async function getURLsInCurrentGroup(groupId) {
     .map((tab) => tab.url);
 
   return URLsInCurrentGroup;
+}
 
+async function getNamesInCurrentGroup(groupId) {
+  allTabs = await chrome.tabs.query({});
+
+  const NamesInCurrentGroup = allTabs
+    .filter((tab) => tab.groupId === groupId)
+    .map((tab) => tab.title);
+
+  return NamesInCurrentGroup;
 }
 
 
@@ -29,7 +38,9 @@ chrome.tabs.onActivated.addListener(async(tabId, tab) => {
   let currentTabsGroupId = await getCurrentTabsGroupId();
   console.log("Current Tab's Group ID:", currentTabsGroupId);
 
-  let tabIdsInCurrentGroup = await getURLsInCurrentGroup(currentTabsGroupId);
-  console.log("Tab IDs in Current Group:", tabIdsInCurrentGroup);
+  let tabURLsInCurrentGroup = await getURLsInCurrentGroup(currentTabsGroupId);
+  console.log("Tab IDs in Current Group:", tabURLsInCurrentGroup);
 
+  let tabNamesInCurrentGroup = await getNamesInCurrentGroup(currentTabsGroupId);
+  console.log("Tab Names in Current Group:", tabNamesInCurrentGroup);
 });
