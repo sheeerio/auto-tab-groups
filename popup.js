@@ -5,6 +5,22 @@ async function getCurrentTabsGroupId() {
     return currentTab[0].groupId;
 }
 
+async function getAllTabGroupIds() {
+    let browserTabGroupObject = await chrome.tabGroups.query({});
+    let browserTabGroupIds = browserTabGroupObject.map((tabGroup) => tabGroup.id);
+    return browserTabGroupIds;
+}
+
+async function getURLsInCurrentGroup(groupId) {
+    let allTabs = await chrome.tabs.query({});
+  
+    const URLsInCurrentGroup = allTabs
+      .filter((tab) => tab.groupId === groupId)
+      .map((tab) => tab.url);
+  
+    return URLsInCurrentGroup;
+}
+
 async function getNamesInCurrentGroup(groupId) {
     let allTabs = await chrome.tabs.query({});
   
@@ -47,18 +63,21 @@ const setBookmarkAttributes =  () => {};
 document.addEventListener("DOMContentLoaded", async () => {
 
     // const urls = getURLsInCurrentGroup();
-    let groupId = await getCurrentTabsGroupId();
-
-    const names = await getNamesInCurrentGroup(groupId);
+    const container = document.getElementsByClassName("container")[0];
     
-    if (names.length > 0) {
+    let tabgroups = await getAllTabGroupIds();
+    if (tabgroups.length > 0) {
+        let groupId = await getCurrentTabsGroupId();
+        let names = await getNamesInCurrentGroup(groupId);
+        let urls = await getURLsInCurrentGroup(groupId);
         // view bookmarks
-        viewBookmarks(names);
+        if (tabgroups.includes(groupId)) {
+            viewBookmarks(names);
+        } else {
+            container.innerHTML = '<div class="title">Current tab is not in a group.</div>';
+        }
 
     } else {
-        const container = document.getElementsByClassName("container")[0];
-
-        container.innerHTML = '<div class="title">This is not a youtube video page.</div>';
-    
+        container.innerHTML = '<div class="title">No tab groups in window found.</div>';
     }
 });
