@@ -1,44 +1,5 @@
-// import { getURLsInCurrentGroup } from "./utils.js";
+import { getCurrentTabsGroupId, getAllTabGroupIds, getURLsInCurrentGroup, getNamesInCurrentGroup, getCurrentTabsGroupTitle } from "./utils.js";
 
-async function getCurrentTabsGroupId() {
-    let currentTab = await chrome.tabs.query({active: true, lastFocusedWindow: true});
-    return currentTab[0].groupId;
-}
-
-async function getAllTabGroupIds() {
-    let browserTabGroupObject = await chrome.tabGroups.query({});
-    let browserTabGroupIds = browserTabGroupObject.map((tabGroup) => tabGroup.id);
-    return browserTabGroupIds;
-}
-
-async function getURLsInCurrentGroup(groupId) {
-    let allTabs = await chrome.tabs.query({});
-  
-    const URLsInCurrentGroup = allTabs
-      .filter((tab) => tab.groupId === groupId)
-      .map((tab) => tab.url);
-  
-    return URLsInCurrentGroup;
-}
-
-async function getCurrentTabsGroupTitle(groupId) {
-    let browserTabGroupObject = await chrome.tabGroups.query({});
-    let currentTabGroupTitle = browserTabGroupObject
-        .filter((tabGroup) => tabGroup.id === groupId)
-        .map((tabGroup) => tabGroup.title);
-    
-    return currentTabGroupTitle[0];
-}
-
-async function getNamesInCurrentGroup(groupId) {
-    let allTabs = await chrome.tabs.query({});
-  
-    const NamesInCurrentGroup = allTabs
-      .filter((tab) => tab.groupId === groupId)
-      .map((tab) => tab.title);
-  
-    return NamesInCurrentGroup;
-}
 
 const addNewTab = (tabsElement, name, idx) => {
 
