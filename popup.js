@@ -2,15 +2,25 @@ import { getCurrentTabsGroupId, getAllTabGroupIds, getURLsInCurrentGroup, getNam
 
 
 const addNewTab = (tabsElement, name, idx) => {
-
     tabsElement.innerHTML += 
-    '<input type="checkbox" id="website'+idx+'" name="website'+idx+'" value="'+name+'">\
+    '<input type="checkbox" id="website'+idx+'" checked name="website'+idx+'" value="'+name+'">\
     <label for="website'+idx+'">'+name+'</label><br>';
+};
+
+const onShare = e => {
+    const bookmarksElement = document.getElementsByClassName("bookmarks")[0];
+    const checkboxes = bookmarksElement.getElementsByTagName("input");
+    let selected = [];
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            selected.push(checkboxes[i].value);
+        }
+    }
+    console.log(selected);
 };
 
 const viewTabs = async(currentNames = [], groupId) => {
     const bookmarksElement = document.getElementsByClassName("bookmarks")[0];
-    console.log("we have the current names");
     
     if (currentNames.length > 0) {
         let tabGroupTitle = await getCurrentTabsGroupTitle(groupId);
@@ -21,7 +31,8 @@ const viewTabs = async(currentNames = [], groupId) => {
             const name = currentNames[i];
             addNewTab(bookmarksElement, name, i);
         }
-        bookmarksElement.innerHTML += '<input type="submit" value="Share!"><br></form>';
+        bookmarksElement.innerHTML += '<input id="share" type="submit" value="Share!"><br></form>';
+        document.getElementById("share").addEventListener("click", onShare);
     } else {
         bookmarksElement.innerHTML = '<i>No tab groups found in window.</i>';
     }
@@ -54,3 +65,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         container.innerHTML = '<div class="title">No tab groups in window found.</div>';
     }
 });
+

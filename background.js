@@ -33,14 +33,10 @@ async function getNamesInCurrentGroup(groupId) {
 chrome.tabs.onActivated.addListener(async(tabId, tab) => {
 
   let allGroupIds = await getAllTabGroupIds();
-  console.log("All Tab Group IDs:", allGroupIds);
 
   let currentTabsGroupId = await getCurrentTabsGroupId();
-  console.log("Current Tab's Group ID:", currentTabsGroupId);
 
   let tabURLsInCurrentGroup = await getURLsInCurrentGroup(currentTabsGroupId);
-  console.log("Tab URLs in Current Group:", tabURLsInCurrentGroup);
 
   let tabNamesInCurrentGroup = await getNamesInCurrentGroup(currentTabsGroupId);
-  console.log("Tab Names in Current Group:", tabNamesInCurrentGroup);
 });
