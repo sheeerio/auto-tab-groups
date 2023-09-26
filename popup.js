@@ -21,6 +21,15 @@ async function getURLsInCurrentGroup(groupId) {
     return URLsInCurrentGroup;
 }
 
+async function getCurrentTabsGroupTitle(groupId) {
+    let browserTabGroupObject = await chrome.tabGroups.query({});
+    let currentTabGroupTitle = browserTabGroupObject
+        .filter((tabGroup) => tabGroup.id === groupId)
+        .map((tabGroup) => tabGroup.title);
+    
+    return currentTabGroupTitle[0];
+}
+
 async function getNamesInCurrentGroup(groupId) {
     let allTabs = await chrome.tabs.query({});
   
@@ -31,24 +40,27 @@ async function getNamesInCurrentGroup(groupId) {
     return NamesInCurrentGroup;
 }
 
-const addNewBookmark = (bookmarksElement, name) => {
-    const bookmarkTitleElement = document.createElement("div");
+const addNewTab = (tabsElement, name, idx) => {
 
-    bookmarkTitleElement.textContent = name;
-    bookmarkTitleElement.className = "bookmark-title";
-
-    bookmarksElement.appendChild(bookmarkTitleElement);
+    tabsElement.innerHTML += 
+    '<input type="checkbox" id="website'+idx+'" name="website'+idx+'" value="'+name+'">\
+    <label for="website'+idx+'">'+name+'</label><br>';
 };
 
-const viewBookmarks = (currentNames = []) => {
+const viewTabs = async(currentNames = [], groupId) => {
     const bookmarksElement = document.getElementsByClassName("bookmarks")[0];
     console.log("we have the current names");
-
+    
     if (currentNames.length > 0) {
+        let tabGroupTitle = await getCurrentTabsGroupTitle(groupId);
+
+        bookmarksElement.innerHTML = '<h2>'+tabGroupTitle+'<h2>';
+        bookmarksElement.innerHTML += '<form action="/action_page.php">';
         for (let i = 0; i<currentNames.length; i++) {
             const name = currentNames[i];
-            addNewBookmark(bookmarksElement, name);
+            addNewTab(bookmarksElement, name, i);
         }
+        bookmarksElement.innerHTML += '<input type="submit" value="Share!"><br></form>';
     } else {
         bookmarksElement.innerHTML = '<i>No tab groups found in window.</i>';
     }
@@ -72,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let urls = await getURLsInCurrentGroup(groupId);
         // view bookmarks
         if (tabgroups.includes(groupId)) {
-            viewBookmarks(names);
+            viewTabs(names, groupId);
         } else {
             container.innerHTML = '<div class="title">Current tab is not in a group.</div>';
         }
