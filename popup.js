@@ -25,7 +25,9 @@ const viewTabs = async(currentNames = [], groupId) => {
     if (currentNames.length > 0) {
         let tabGroupTitle = await getCurrentTabsGroupTitle(groupId);
 
-        bookmarksElement.innerHTML = '<h2>'+tabGroupTitle+'<h2>';
+        //editable title of tab group without any border, but adds borderer when clicked
+        bookmarksElement.innerHTML = '<input type="text" id="title" value="'+tabGroupTitle+'"><br>';
+        
         bookmarksElement.innerHTML += '<form action="/action_page.php">';
         for (let i = 0; i<currentNames.length; i++) {
             const name = currentNames[i];
@@ -38,11 +40,7 @@ const viewTabs = async(currentNames = [], groupId) => {
     }
 };
 
-const onPlay = e => {};
 
-const onDelete = e => {};
-
-const setBookmarkAttributes =  () => {};
 
 document.addEventListener("DOMContentLoaded", async () => {
 
